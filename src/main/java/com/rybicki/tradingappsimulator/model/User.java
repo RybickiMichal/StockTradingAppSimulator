@@ -8,9 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.math.BigDecimal;
 import java.util.Map;
 
+@Builder
 @Data
 @Document
-@Builder
 public class User {
     @Id
     private final String id;

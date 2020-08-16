@@ -12,8 +12,8 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
 
-@Service
 @AllArgsConstructor
+@Service
 @Slf4j
 public class UserService {
 
@@ -33,7 +33,7 @@ public class UserService {
                     .wallet(new HashMap<>())
                     .build());
         }
-        log.warn("actual users number = " + userRepository.count());
+        log.info("actual users number = " + userRepository.count());
     }
 
     public List<User> getUsers() {

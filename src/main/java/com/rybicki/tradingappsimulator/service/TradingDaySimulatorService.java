@@ -5,6 +5,7 @@ import com.rybicki.tradingappsimulator.model.Money;
 import com.rybicki.tradingappsimulator.model.Purchase;
 import com.rybicki.tradingappsimulator.model.User;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -14,8 +15,9 @@ import java.util.Map;
 
 import static com.rybicki.tradingappsimulator.model.UserStrategy.*;
 
-@Service
 @AllArgsConstructor
+@Service
+@Slf4j
 public class TradingDaySimulatorService {
 
     private final OrderService orderService;
@@ -62,7 +64,7 @@ public class TradingDaySimulatorService {
 
     private void sellRandomUserStocks(SecureRandom random, User user) {
         if (CollectionUtils.isEmpty(user.getWallet())) {
-            System.out.println("wallet is empty for user with id " + user.getId());
+            log.info("wallet is empty for user with id " + user.getId());
         } else {
             orderService.sellStocks(user, getRandomCompanyFromWallet(random, user.getWallet()));
 
@@ -75,7 +77,7 @@ public class TradingDaySimulatorService {
     //users always buy stocks for half of they available money
     private void buyRandomStocks(User user) {
         if (user.getAccountBalance().doubleValue() == 0) {
-            System.out.println("Account balance equal 0 for user id " + user.getId());
+            log.info("Account balance equal 0 for user id " + user.getId());
         } else {
             BigDecimal halfOfAccountBalance = user.getAccountBalance().divide(new BigDecimal(2));
             orderService.buyStocks(user, DowJones30Company.getRandomDowJones30Company(), new Money("USD", halfOfAccountBalance));

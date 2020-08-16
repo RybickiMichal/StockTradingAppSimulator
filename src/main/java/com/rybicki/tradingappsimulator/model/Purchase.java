@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
 
-@Getter
 @AllArgsConstructor
+@Getter
 public class Purchase {
     @Id
     private final String id;

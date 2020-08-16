@@ -1,6 +1,7 @@
 package com.rybicki.tradingappsimulator.service;
 
 import com.rybicki.tradingappsimulator.model.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -8,6 +9,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 @Service
+@Slf4j
 public class StockCalendarService {
 
     public StockCalendarService(UserService userService) {
@@ -26,14 +28,14 @@ public class StockCalendarService {
 
     private void setNextDayInCalendar() {
         calendar.add(Calendar.DAY_OF_MONTH, 1);
-        System.out.println("today is " + calendar.getTime().toString());
+        log.info("today is " + calendar.getTime().toString());
     }
 
     public void addMoneyForUsers() {
         for (User user : userService.getUsers()) {
             user.setAccountBalance(new BigDecimal(user.getAccountBalance().doubleValue()).add(new BigDecimal(user.getEveryMonthPayment())));
             userService.actualiseUser(user);
-            System.out.println("new User Account Ballance equal " + user.getAccountBalance().intValue());
+            log.info("new User Account Ballance equal " + user.getAccountBalance().intValue());
         }
     }
 }
