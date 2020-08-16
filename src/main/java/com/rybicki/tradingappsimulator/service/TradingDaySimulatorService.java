@@ -6,10 +6,11 @@ import com.rybicki.tradingappsimulator.model.Purchase;
 import com.rybicki.tradingappsimulator.model.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
-import java.util.List;
+import java.util.Map;
 
 import static com.rybicki.tradingappsimulator.model.UserStrategy.*;
 
@@ -17,7 +18,8 @@ import static com.rybicki.tradingappsimulator.model.UserStrategy.*;
 @AllArgsConstructor
 public class TradingDaySimulatorService {
 
-    OrderService orderService;
+    private final OrderService orderService;
+    private final UserService userService;
 
     public void simulateDayForUser(User user) {
         SecureRandom random = new SecureRandom();
@@ -59,19 +61,33 @@ public class TradingDaySimulatorService {
     }
 
     private void sellRandomUserStocks(SecureRandom random, User user) {
-        orderService.sellStocks(user, getRandomCompanyFromWallet(random, user.getWallet()));
+        if (CollectionUtils.isEmpty(user.getWallet())) {
+            System.out.println("wallet is empty for user with id " + user.getId());
+        } else {
+            orderService.sellStocks(user, getRandomCompanyFromWallet(random, user.getWallet()));
+
+            //TODO change hardcoded value to real stock value
+            user.setAccountBalance(user.getAccountBalance().add(new BigDecimal(20000)));
+            userService.actualiseUser(user);
+        }
     }
 
     //users always buy stocks for half of they available money
     private void buyRandomStocks(User user) {
-        BigDecimal halfOfAccountBalance = user.getAccountBalance().divide(new BigDecimal(2));
-        orderService.buyStocks(user, DowJones30Company.getRandomDowJones30Company(), new Money("USD", halfOfAccountBalance));
+        if (user.getAccountBalance().doubleValue() == 0) {
+            System.out.println("Account balance equal 0 for user id " + user.getId());
+        } else {
+            BigDecimal halfOfAccountBalance = user.getAccountBalance().divide(new BigDecimal(2));
+            orderService.buyStocks(user, DowJones30Company.getRandomDowJones30Company(), new Money("USD", halfOfAccountBalance));
 
-        user.setAccountBalance(user.getAccountBalance().divide(new BigDecimal(2)));
+            user.setAccountBalance(user.getAccountBalance().divide(new BigDecimal(2)));
+            userService.actualiseUser(user);
+        }
     }
 
-    private DowJones30Company getRandomCompanyFromWallet(SecureRandom random, List<Purchase> purchases) {
-        return purchases.get(random.nextInt(purchases.size())).getDowJones30Company();
+    private DowJones30Company getRandomCompanyFromWallet(SecureRandom random, Map<String, Purchase> wallet) {
+        String[] purchases = wallet.keySet().toArray(new String[0]);
+        return wallet.get(purchases[random.nextInt(wallet.size())]).getDowJones30Company();
     }
 
 }

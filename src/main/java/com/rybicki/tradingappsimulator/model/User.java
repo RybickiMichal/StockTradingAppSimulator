@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Map;
 
 @Data
 @Document
@@ -17,5 +17,5 @@ public class User {
     private BigDecimal accountBalance;
     private UserStrategy userStrategy;
     private int everyMonthPayment;
-    private List<Purchase> wallet;
+    private Map<String, Purchase> wallet;
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 public class UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public void initUsers(int numberOfUsers) {
         SecureRandom random = new SecureRandom();
@@ -30,7 +30,7 @@ public class UserService {
                     .everyMonthPayment(random.nextInt(100000))
                     .id(Integer.toString(x))
                     .userStrategy(UserStrategy.getRandomUserStrategy())
-                    .wallet(new ArrayList<>())
+                    .wallet(new HashMap<>())
                     .build());
         }
         log.warn("actual users number = " + userRepository.count());
@@ -38,6 +38,10 @@ public class UserService {
 
     public List<User> getUsers() {
         return userRepository.findAll();
+    }
+
+    public void actualiseUser(User user) {
+        userRepository.save(user);
     }
 
     public void deleteUsers() {

@@ -13,18 +13,18 @@ import java.util.UUID;
 public class OrderService {
 
     //TODO change it into bean
-    RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public void buyStocks(User user, DowJones30Company dowJones30Company, Money money) {
         //TODO restTemplate
-        user.getWallet().add(new Purchase(UUID.randomUUID().toString(), dowJones30Company, money));
-        System.out.println("Company " + dowJones30Company.getIndex() + " added to wallet for user " + user.getId() + " for " + money.getAmount() + money.getCurrency());
+        user.getWallet().put(dowJones30Company.getIndex(), new Purchase(UUID.randomUUID().toString(), dowJones30Company, money));
+        System.out.println("Company " + dowJones30Company.getIndex() + " added to wallet for user " + user.getId() + " for " + money.getAmount() + " " + money.getCurrency());
     }
 
     //Users always sell all stocks
     public void sellStocks(User user, DowJones30Company dowJones30Company) {
         //TODO restTemplate
-        user.getWallet().remove(dowJones30Company);
+        user.getWallet().remove(dowJones30Company.getIndex());
         System.out.println("Company " + dowJones30Company.getIndex() + " removed from wallet for user " + user.getId());
     }
 }
