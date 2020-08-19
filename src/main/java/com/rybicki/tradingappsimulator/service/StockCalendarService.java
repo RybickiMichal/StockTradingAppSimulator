@@ -19,6 +19,7 @@ public class StockCalendarService {
     private final UserService userService;
     private final Calendar calendar = new GregorianCalendar(2020, Calendar.JANUARY, 1);
 
+    //users always send money in every second day of the month
     public void initNewDayInStockMarket(){
         setNextDayInCalendar();
         if(calendar.get(Calendar.DAY_OF_MONTH) == 2){

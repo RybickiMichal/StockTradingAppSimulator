@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.SecureRandom;
 import java.util.Map;
 
@@ -79,10 +80,10 @@ public class TradingDaySimulatorService {
         if (user.getAccountBalance().doubleValue() == 0) {
             log.info("Account balance equal 0 for user id " + user.getId());
         } else {
-            BigDecimal halfOfAccountBalance = user.getAccountBalance().divide(new BigDecimal(2));
+            BigDecimal halfOfAccountBalance = user.getAccountBalance().divide(new BigDecimal(2)).setScale(2, RoundingMode.HALF_DOWN);
             orderService.buyStocks(user, DowJones30Company.getRandomDowJones30Company(), new Money("USD", halfOfAccountBalance));
 
-            user.setAccountBalance(user.getAccountBalance().divide(new BigDecimal(2)));
+            user.setAccountBalance(user.getAccountBalance().divide(new BigDecimal(2)).setScale(2, RoundingMode.HALF_DOWN));
             userService.actualiseUser(user);
         }
     }
