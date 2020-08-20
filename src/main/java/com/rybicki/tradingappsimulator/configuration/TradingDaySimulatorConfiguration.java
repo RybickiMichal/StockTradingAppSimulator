@@ -16,14 +16,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 @EnableAsync
 @EnableScheduling
 @Slf4j
-public class TradingDaySimulatorConfig {
+public class TradingDaySimulatorConfiguration {
 
     private final UserService userService;
     private final TradingDaySimulatorService tradingDaySimulatorService;
     private final StockCalendarService stockCalendarService;
 
     @Async
-    @Scheduled(fixedRate  = 1000)
+    @Scheduled(fixedRate = 1000)
     public void simulateTradingDay() {
         stockCalendarService.initNewDayInStockMarket();
 

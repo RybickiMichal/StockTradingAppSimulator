@@ -1,9 +1,6 @@
 package com.rybicki.tradingappsimulator.service;
 
-import com.rybicki.tradingappsimulator.model.DowJones30Company;
-import com.rybicki.tradingappsimulator.model.Money;
-import com.rybicki.tradingappsimulator.model.Purchase;
-import com.rybicki.tradingappsimulator.model.User;
+import com.rybicki.tradingappsimulator.model.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,6 +11,8 @@ import java.math.RoundingMode;
 import java.security.SecureRandom;
 import java.util.Map;
 
+import static com.rybicki.tradingappsimulator.model.OrderType.BUY;
+import static com.rybicki.tradingappsimulator.model.OrderType.SELL;
 import static com.rybicki.tradingappsimulator.model.UserStrategy.*;
 
 @AllArgsConstructor
@@ -67,7 +66,11 @@ public class TradingDaySimulatorService {
         if (CollectionUtils.isEmpty(user.getWallet())) {
             log.info("wallet is empty for user with id " + user.getId());
         } else {
-            orderService.sellStocks(user, getRandomCompanyFromWallet(random, user.getWallet()));
+            orderService.sellStocks(OrderDTO.builder()
+                    .orderType(SELL)
+                    .userId(user.getId())
+                    .companyIndex(getRandomCompanyFromWallet(random, user.getWallet()).getIndex())
+                    .build(), user);
 
             //TODO change hardcoded value to real stock value
             user.setAccountBalance(user.getAccountBalance().add(new BigDecimal(20000)));
@@ -81,7 +84,12 @@ public class TradingDaySimulatorService {
             log.info("Account balance equal 0 for user id " + user.getId());
         } else {
             BigDecimal halfOfAccountBalance = user.getAccountBalance().divide(new BigDecimal(2)).setScale(2, RoundingMode.HALF_DOWN);
-            orderService.buyStocks(user, DowJones30Company.getRandomDowJones30Company(), new Money("USD", halfOfAccountBalance));
+            orderService.buyStocks(OrderDTO.builder()
+                    .orderType(BUY)
+                    .userId(user.getId())
+                    .companyIndex(DowJones30Company.getRandomDowJones30Company().getIndex())
+                    .money(new Money("USD", halfOfAccountBalance))
+                    .build(), user);
 
             user.setAccountBalance(user.getAccountBalance().divide(new BigDecimal(2)).setScale(2, RoundingMode.HALF_DOWN));
             userService.actualiseUser(user);

@@ -50,4 +50,13 @@ public enum DowJones30Company {
     public static DowJones30Company getRandomDowJones30Company() {
         return VALUES.get(RANDOM.nextInt(VALUES.size()));
     }
+
+    public static DowJones30Company getValue(String index) {
+        for(DowJones30Company dowJones30Company: DowJones30Company.values()) {
+            if(dowJones30Company.getIndex().equals(index)) {
+                return dowJones30Company;
+            }
+        }
+        throw new IllegalArgumentException();
+    }
 }
